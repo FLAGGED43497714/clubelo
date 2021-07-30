@@ -1,5 +1,9 @@
 import numpy as np 
 
+x_test = np.genfromtxt("data\est_draw2.csv", delimiter=",")[3:, 2]
+print("x_test")
+print(x_test)
+
 #x_entrer = np.array(([3, 1.5], [2, 1], [4, 1.5], [3, 1], [3.5,0.5], [2,0.5], [5.5,1], [1,1], [4,1.5]), dtype=float) # données d'entrer
 #y = np.array(([1], [0], [1],[0],[1],[0],[1],[0]), dtype=float) # données de sortie /  1 = rouge /  0 = bleu
 path_csv = "data\egalite_par_ecart_de_elo_FRANCE.csv"
@@ -9,6 +13,9 @@ for k in range(len(x_1)) :
   x_entrer[k][0] = x_1[k]
 y_1 = np.genfromtxt(path_csv, delimiter=",")[3:-1, 5]
 y_1 = y_1[:-1]
+
+maxdelta = np.amax(x_entrer, axis=0)[0]
+
 
 y = np.array([[0] for k in range(len(y_1))])
 for k in range(len(y_1)) :
@@ -96,7 +103,7 @@ class Neural_Network(object):
 
 NN = Neural_Network()
 
-for i in range(1000): #Choisissez un nombre d'itération, attention un trop grand nombre peut créer un overfitting !
+for i in range(500): #Choisissez un nombre d'itération, attention un trop grand nombre peut créer un overfitting !
     print("# " + str(i) + "\n")
     print("Valeurs d'entrées: \n" + str(X))
     print("Sortie actuelle: \n" + str(y))
@@ -105,3 +112,9 @@ for i in range(1000): #Choisissez un nombre d'itération, attention un trop gran
     NN.train(X,y)
 
 NN.predict()
+
+y_test = [0 for k in range(len(x_test))]
+for k in range(len(x_test)) :
+  y_test[k] = NN.forward([x_test[k]/maxdelta, 1])
+
+print(y_test)

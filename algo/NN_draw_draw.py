@@ -15,6 +15,8 @@ y = np.array([[0] for k in range(len(y_1))])
 for k in range(len(y_1)) :
   y[k][0] = y_1[k]
 
+maxdelta = np.amax(x_entrer, axis=0)[0]
+
 # Changement de l'échelle de nos valeurs pour être entre 0 et 1
 x_entrer = x_entrer/np.amax(x_entrer, axis=0) # On divise chaque entré par la valeur max des entrées
 
@@ -113,7 +115,7 @@ NN.predict()
 
 prob_dens = [0 for k in range(100)]
 for k in range(100) :
-    prob_dens[k] = NN.forward([5*k / 315, 1])
+    prob_dens[k] = NN.forward([5*k / maxdelta, 1])
 x_axis = [5*k for k in range(100)]
 
 plt.plot(x_axis, prob_dens)
