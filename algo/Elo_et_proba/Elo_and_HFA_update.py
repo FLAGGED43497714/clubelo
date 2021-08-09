@@ -9,6 +9,17 @@ with open("config\max_update_coeff.txt") as f :
 with open("config/k_value.txt") as f :
     K =  int(f.read())
 
+
+path_matchs = "data/saison_2021_sans_cotes.csv"
+path_current_elo = "data/elo_FRA1_test.csv"
+path_current_HFA = "data/HFA_FRA1_test.csv"
+
+
+currentHFA = np.genfromtxt(path_current_HFA, delimiter=',', dtype=str)[0:, 0:2]
+currentElo = np.genfromtxt(path_current_elo, delimiter=',', dtype=str)[0:, 0:2]
+Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:4]
+
+
 def elo_update_aftermatch(home_elo, away_elo, homeHFA, home_wins) :
     new_home_elo = home_elo + K * (home_wins - score_estimation(home_elo + homeHFA, away_elo - homeHFA) )
     new_away_elo = away_elo + K * ( (1 - home_wins) - score_estimation(away_elo - homeHFA, home_elo + homeHFA))
@@ -26,13 +37,6 @@ def HFA_update_aftermatch(homeElo, awayElo, home_HFA, home_wins) :
     return home_new_HFA
 
 
-path_matchs = "data/saison_2021_sans_cotes.csv"
-path_current_elo = "data/elo_FRA1_test.csv"
-path_current_HFA = "data/HFA_FRA1_test.csv"
-
-currentHFA = np.genfromtxt(path_current_HFA, delimiter=',', dtype=str)[0:, 0:2]
-currentElo = np.genfromtxt(path_current_elo, delimiter=',', dtype=str)[0:, 0:2]
-Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:4]
 
 def one_match_update(Matchs, currentElo, currentHFA, match_nb) :
     homeTeam = Matchs[match_nb][0]
@@ -82,14 +86,5 @@ df_elo.to_csv(path_current_elo, index=False, header = False)
 
 df_HFA = pd.DataFrame(currentHFA)
 df_HFA.to_csv(path_current_HFA, index=False, header = False)
-
-
-##################################################################
-
-
-
-
-
-# il faut ensuite ajouter "update" aux HFA respectifs de chaque équipe.
 
 # faire les ajustement en fonction du score 
