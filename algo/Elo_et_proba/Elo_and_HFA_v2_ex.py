@@ -12,7 +12,7 @@ path_start_elo = "data/elo_start_2020_v2.csv"
 path_current_elo_home = "data/elo_FRA1_test2_home.csv"
 path_current_elo_away = "data/elo_FRA1_test2_away.csv"
 
-
+#ces 3 arrays servent juste à construire les 2 prochains
 currentElo_home_name = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 0]
 currentElo_home_elo = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 1]
 currentElo_away_elo = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 2]
@@ -29,7 +29,7 @@ Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:4]
 
 nb_de_matchs = len(Matchs)
 for match_nb in range(nb_de_matchs) :
-    one_match_update(Matchs, currentElo_home, currentElo_away, match_nb, K)
+    currentElo_home, currentElo_away = one_match_update(Matchs, currentElo_home, currentElo_away, match_nb, K)
 
 df_elo_home = pd.DataFrame(currentElo_home)
 df_elo_home.to_csv(path_current_elo_home, index=False, header = False)

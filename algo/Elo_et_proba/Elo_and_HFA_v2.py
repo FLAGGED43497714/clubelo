@@ -38,4 +38,6 @@ def one_match_update(Matchs, currentElo_home, currentElo_away, match_nb, K) :
         if currentElo_away[k][0] == awayTeam :
             currentElo_away[k][1] = str(new_away_elo)
 
+    return currentElo_home, currentElo_away
+
 
