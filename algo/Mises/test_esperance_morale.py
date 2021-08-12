@@ -32,7 +32,7 @@ def mise(C, x, K, p) :
 
 
 
-path_csv = "data\Paris_2021.csv"
+path_csv = "data\dataBacktest\Paris_2021.csv"
 
 #K pour les cotes, p pour les probas
 #W = win, D = draw, L = loose

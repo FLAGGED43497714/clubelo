@@ -7,10 +7,10 @@ with open("config/k_value.txt") as f :
     K =  int(f.read())
 
 
-path_matchs = "data/saison_2021_sans_cotes.csv"
-path_start_elo = "data/elo_start_2020_v2.csv"
-path_current_elo_home = "data/elo_FRA1_test2_home.csv"
-path_current_elo_away = "data/elo_FRA1_test2_away.csv"
+path_matchs = "data\saisons\saison_2019_2020_sans_cotes.csv"
+path_start_elo = "data\elo_start\elo_start_2019_v2.csv"
+path_current_elo_home = "data/elo_start/elo_FRA1_test2_home.csv"
+path_current_elo_away = "data/elo_start/elo_FRA1_test2_away.csv"
 
 #ces 3 arrays servent juste à construire les 2 prochains
 currentElo_home_name = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 0]

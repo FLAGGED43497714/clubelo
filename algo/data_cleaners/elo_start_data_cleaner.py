@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-path = "data/2020-08-20"
+path = "data/2019-08-20"
 matchs_v1 = np.genfromtxt(path, delimiter=',', dtype=str)
 
 matchs_v2 = [[]]
@@ -11,4 +11,4 @@ for k in range(len(matchs_v1)) :
 
 
 df = pd.DataFrame(matchs_v2)
-df.to_csv('data/elo_start_2020.csv')
+df.to_csv('data/elo_start_2019.csv')
