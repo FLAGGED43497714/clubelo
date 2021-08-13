@@ -4,7 +4,7 @@ from math import *
 
 #x_entrer = np.array(([3, 1.5], [2, 1], [4, 1.5], [3, 1], [3.5,0.5], [2,0.5], [5.5,1], [1,1], [4,1.5]), dtype=float) # données d'entrer
 #y = np.array(([1], [0], [1],[0],[1],[0],[1],[0]), dtype=float) # données de sortie /  1 = rouge /  0 = bleu
-path_csv = "data\egalite_ecart_elo2.csv"
+path_csv = "data/NN_egalites\egaliteDeltaElo_v2.csv"
 x_1 = np.genfromtxt(path_csv, delimiter=",")[0:, 0]
 x_entrer = np.array([[0,1] for k in range(len(x_1))])
 for k in range(len(x_1)) :
@@ -25,15 +25,6 @@ x_entrer = x_entrer/np.amax(x_entrer, axis=0) # On divise chaque entré par la v
 X = np.split(x_entrer, [-2])[0] # Données sur lesquelles on va s'entrainer, les 8 premières de notre matrice
 xPrediction = np.split(x_entrer, [-1])[1] # Valeur que l'on veut trouver
 
-# print("x_entrer")
-# print(x_entrer)
-# print("y")
-# print(y)
-# print("X")
-# print(X)
-# print("xPrediction")
-# print(xPrediction)
-# raise
 
 #Notre classe de réseau neuronal
 class Neural_Network(object):
@@ -100,24 +91,39 @@ class Neural_Network(object):
 
 NN = Neural_Network()
 
-for i in range(100): #Choisissez un nombre d'itération, attention un trop grand nombre peut créer un overfitting !
-    print("# " + str(i) + "\n")
-    print("Valeurs d'entrées: \n" + str(X))
-    print("Sortie actuelle: \n" + str(y))
-    print("Sortie prédite: \n" + str(np.matrix.round(NN.forward(X),2)))
-    print("\n")
+for i in range(150): #Choisissez un nombre d'itération, attention un trop grand nombre peut créer un overfitting !
+    # print("# " + str(i) + "\n")
+    # print("Valeurs d'entrées: \n" + str(X))
+    # print("Sortie actuelle: \n" + str(y))
+    # print("Sortie prédite: \n" + str(np.matrix.round(NN.forward(X),2)))
+    # print("\n")
     NN.train(X,y)
 
-NN.predict()
-
-# print("NN.forward([0.2,1])")
-# print(NN.forward([0.2,1]))
 
 
-prob_dens = [0 for k in range(100)]
-for k in range(100) :
+
+prob_dens = [0 for k in range(60)]
+for k in range(60) :
     prob_dens[k] = NN.forward([5*k / maxdelta, 1])
-x_axis = [5*k for k in range(100)]
+x_axis = [5*k for k in range(60)]
 
-plt.plot(x_axis, prob_dens)
-plt.show()
+
+s = 0
+s_quad = 0
+for k in range(len(X)) :
+  error = NN.forward(X[k]) - y_1[k]
+  quad_error = error **2
+  s+=error
+  s_quad += quad_error
+
+error_moy = s/len(X)
+error_quad_moy = s_quad/len(X)
+
+print("erreur")
+print(error_moy)
+print("quad_error")
+print(error_quad_moy)
+
+if (abs(error_moy) < 0.1) :
+  plt.plot(x_axis, prob_dens)
+  plt.show()
