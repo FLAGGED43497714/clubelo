@@ -4,7 +4,7 @@ def score_estimation(team_elo, opponent_elo) :
 
     return Eh  
 
-def score_estimation(delta_elo) :
+def score_estimation2(delta_elo) :
     
     Eh = 1 / (1 + 10**( (delta_elo) / 400 ) )
 

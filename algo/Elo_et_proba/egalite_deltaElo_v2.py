@@ -52,5 +52,3 @@ def dataSetDraw(path_matchs, path_start_elo) :
     return res
     # df = pd.DataFrame(res)
     # df.to_csv(path_out, index=False, header = False)
-
-
