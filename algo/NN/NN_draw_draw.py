@@ -53,6 +53,6 @@ print(error_moy)
 print("quad_error")
 print(error_quad_moy)
 
-if (abs(error_moy) < 0.1) :
-  plt.plot(x_axis, prob_dens)
-  plt.show()
+
+plt.plot(x_axis, prob_dens)
+plt.show()
