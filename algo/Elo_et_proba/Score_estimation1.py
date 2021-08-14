@@ -4,7 +4,11 @@ def score_estimation(team_elo, opponent_elo) :
 
     return Eh  
 
+def score_estimation(delta_elo) :
+    
+    Eh = 1 / (1 + 10**( (delta_elo) / 400 ) )
 
+    return Eh  
 
 def score_probas(team_elo, opponent_elo) :
     Eh = score_estimation(team_elo, opponent_elo)
