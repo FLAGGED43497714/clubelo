@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import sys
 
 from Elo_and_HFA_update import one_match_update
 
