@@ -9,7 +9,7 @@ def mise(C, K, p) :
     return C * f 
 
 path_csv = "data\dataBacktest\Strasbourg_2021.csv"
-
+path_out = 'data/testfile.csv'
 #K pour les cotes, p pour les probas
 #W = win, D = draw, L = loose
 
@@ -61,4 +61,4 @@ for i in range(nb_match) :
     C_array[i+1] = C_array[i] -s + s * res[i] * bets_taken[i][1]
 
 df = pd.DataFrame(C_array)
-df.to_csv('data/testfile.csv')
+df.to_csv(path_out)
