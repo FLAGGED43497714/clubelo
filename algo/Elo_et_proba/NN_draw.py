@@ -1,5 +1,6 @@
 import numpy as np
-
+from numpy.matrixlib.defmatrix import matrix
+import pandas as pd
 
 #Notre classe de réseau neuronal
 class Neural_Network(object):
@@ -49,3 +50,13 @@ class Neural_Network(object):
         
     o = self.forward(X)
     self.backward(X, y, o)
+
+  def save(self, out_W1="W1.dat", out_W2="W2.dat") :
+    parameters = np.array([self.W1, self.W2], dtype=object)
+    parameters[0].dump(out_W1)
+    parameters[1].dump(out_W2)
+
+  def set(self, from_W1="W1.dat", from_W2="W2.dat") :
+    self.W1 = np.load(from_W1, allow_pickle=True)
+    self.W2 = np.load(from_W2, allow_pickle=True)
+

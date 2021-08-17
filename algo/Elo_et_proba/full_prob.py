@@ -5,8 +5,10 @@ import pandas as pd
 
 path_matchs = "data\saisons\saison_2021_sans_cotes.csv"
 path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+path_out = "fullversion1.csv"
 
-match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo)
+match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo, imported=True)
+# match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo, saved=True)
 
 nb_of_matchs = len(match_prediction_draw)
 
@@ -20,4 +22,4 @@ for match_nb in range(nb_of_matchs) :
     match_prediction_draw[match_nb][5] = str(away_percent)
 
 df = pd.DataFrame(match_prediction_draw)
-df.to_csv("fullversion1.csv", index=False, header = False)
+df.to_csv(path_out, index=False, header = False)

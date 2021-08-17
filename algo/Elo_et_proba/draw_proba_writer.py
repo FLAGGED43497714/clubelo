@@ -8,7 +8,8 @@ with open("config/k_value.txt") as f :
     K =  int(f.read())
 
 #Path :
-def draw_proba_writer(path_matchs, path_start_elo) :
+def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W1="data/W1.dat", path_import_W2="data/W2.dat", 
+  saved=False, path_save_W1="data/W1.dat", path_save_W2="data/W2.dat") :
   res = dataSetDraw(path_matchs, path_start_elo)
 
   ##### Entrainement #####
@@ -37,24 +38,30 @@ def draw_proba_writer(path_matchs, path_start_elo) :
 
 
 
-
-  error_moy = 1
-  error_quad_moy = 1
-  while(abs(error_moy) > 0.245 and error_quad_moy > 0.245) :
+  if ( imported == False ) :
+    print("NN is not imported")
+    error_moy = 1
+    error_quad_moy = 1
+    while(abs(error_moy) > 0.245 and error_quad_moy > 0.245) :
+      NN = Neural_Network()
+      for i in range(500): #Choisissez un nombre d'itération, attention un trop grand nombre peut créer un overfitting !
+        NN.train(X,y)
+      s = 0
+      s_quad = 0
+      for k in range(len(X)) :
+        error = (NN.forward(X[k]/maxdelta) - y_1[k])
+        error_quad = error**2 
+        s+=error
+        s_quad += error_quad
+      error_moy = s/len(X)
+      error_quad_moy = s_quad/len(X)
+    if ( saved == True ) :
+      print("NN is saved in : "+path_save_W1+" and "+path_save_W2)
+      NN.save(out_W1=path_save_W1, out_W2=path_save_W2)
+  else :
+    print("NN is imported from : "+path_import_W1+" and "+path_import_W2)
     NN = Neural_Network()
-    for i in range(500): #Choisissez un nombre d'itération, attention un trop grand nombre peut créer un overfitting !
-      NN.train(X,y)
-    s = 0
-    s_quad = 0
-    for k in range(len(X)) :
-      error = (NN.forward(X[k]/maxdelta) - y_1[k])
-      error_quad = error**2 
-      s+=error
-      s_quad += error_quad
-    error_moy = s/len(X)
-    error_quad_moy = s_quad/len(X)
-    print(s/len(X))
-
+    NN.set(from_W1=path_import_W1, from_W2=path_import_W2)
 
     
 
@@ -76,12 +83,8 @@ def draw_proba_writer(path_matchs, path_start_elo) :
   nb_d_equipe = len(Elo_name)
 
   currentElo_home2 = [[Elo_name[k],Elo_home[k]] for k in range(nb_d_equipe)]
-  print("currentElo_home2")
-  print(currentElo_home2)
   currentElo_away2 = [[Elo_name[k],Elo_away[k]] for k in range(nb_d_equipe)]
 
-  print("nb_de_matchs")
-  print(nb_de_matchs)
   for match_nb in range(nb_de_matchs) :
     homeTeam = Matchs[match_nb][0]
     awayTeam = Matchs[match_nb][1]
@@ -91,24 +94,18 @@ def draw_proba_writer(path_matchs, path_start_elo) :
       if currentElo_away2[k][0] == awayTeam :
           awayElo = float(currentElo_away2[k][1])
 
-    print("homeTeam")
-    print(homeTeam)
-    print("homeElo")
-    print(homeElo)
     deltaElo = homeElo - awayElo
     Matchs_predictions[match_nb][2] = deltaElo
 
     draw_percentage = NN.forward([deltaElo/maxdelta, 1])[0]
-    print("draw_percentage")
-    print(draw_percentage)
     Matchs_predictions[match_nb][4] = draw_percentage
     currentElo_home2, currentElo_away2 = one_match_update(Matchs, currentElo_home2, currentElo_away2, match_nb, K)
 
   return Matchs_predictions
 
-  prob_dens = [0 for k in range(60)]
-  for k in range(60) :
-      prob_dens[k] = NN.forward([5*k / maxdelta, 1])
-  x_axis = [5*k for k in range(60)]
-  plt.plot(x_axis, prob_dens)
-  plt.show()
+  # prob_dens = [0 for k in range(60)]
+  # for k in range(60) :
+  #     prob_dens[k] = NN.forward([5*k / maxdelta, 1])
+  # x_axis = [5*k for k in range(60)]
+  # plt.plot(x_axis, prob_dens)
+  # plt.show()
