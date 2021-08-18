@@ -10,7 +10,7 @@ def mise(C, K, p) :
     f = p - (1 - p) / ( K - 1 )
     return C * f 
 
-path_csv = "data\dataBacktest\\2020_2021_test1.csv"
+path_csv = "data\dataBacktest\\2020_2021_test22.csv"
 
 
 path_out = 'data/testfile1.csv'
