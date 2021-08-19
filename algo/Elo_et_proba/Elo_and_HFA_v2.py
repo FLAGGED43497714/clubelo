@@ -14,15 +14,16 @@ def one_match_update(Matchs, currentElo_home, currentElo_away, match_nb, K) :
     homeTeam = Matchs[match_nb][0]
     awayTeam = Matchs[match_nb][1]
 
-    homeScore = int(Matchs[match_nb][2])
-    awayScore = int(Matchs[match_nb][3])
-        
-    if homeScore > awayScore :
+    outcome = int(Matchs[match_nb][10])
+
+
+    if outcome == 1 :
         home_wins = 1 
-    if homeScore == awayScore :
-        home_wins = 0.5 
-    if homeScore < awayScore :
+    if outcome == 2 :
+        home_wins = 0.5
+    if outcome == 3 :
         home_wins = 0
+
 
     for k in range(len(currentElo_home)) :
         if currentElo_home[k][0] == homeTeam :

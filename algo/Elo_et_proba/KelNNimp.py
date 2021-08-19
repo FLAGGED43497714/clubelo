@@ -9,12 +9,12 @@ path_out_prob = "data\probs.csv"
 
 realistic = True
 
-# match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
-# path_import_W1="data/W1_test4.dat", path_import_W2="data/W2_test4.dat")
+match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
+path_import_W1="data/W1_test3.dat", path_import_W2="data/W2_test3.dat")
 # maxCap = 0
 # while(maxCap < 1000 or realistic == False) :
-match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
-path_save_W1="data/W1_test5.dat", path_save_W2="data/W2_test5.dat")
+# match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
+# path_save_W1="data/W1_test4.dat", path_save_W2="data/W2_test4.dat")
 
 nb_of_matchs = len(match_prediction)
 

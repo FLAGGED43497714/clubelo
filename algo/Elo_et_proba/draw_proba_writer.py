@@ -63,13 +63,22 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
     NN = Neural_Network()
     NN.set(from_W1=path_import_W1, from_W2=path_import_W2)
 
+  prob_dens = [0 for k in range(60)]
+  for k in range(60) :
+      prob_dens[k] = NN.forward([5*k / maxdelta, 1])
+  x_axis = [5*k for k in range(60)]
+  plt.plot(x_axis, prob_dens)
+  plt.show()
+
+
     
 
 
 
-  ####### Prédictions
 
-  Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:4]
+  ####### Prédictions #######
+
+  Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:11]
 
   nb_de_matchs = len(Matchs)
 

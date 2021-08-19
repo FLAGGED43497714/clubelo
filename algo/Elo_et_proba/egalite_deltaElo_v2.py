@@ -12,7 +12,7 @@ def dataSetDraw(path_matchs, path_start_elo) :
         K =  int(f.read())
 
 
-    Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:4]
+    Matchs = np.genfromtxt(path_matchs, delimiter=',', dtype=str)[0:, 0:11]
 
     Elo_name = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 0]
     Elo_home = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 1]
@@ -44,7 +44,7 @@ def dataSetDraw(path_matchs, path_start_elo) :
 
         res[match_nb][0] = deltaElo
 
-        if Matchs[match_nb][2] == Matchs[match_nb][3] :
+        if int(Matchs[match_nb][10]) == 2 :
             res[match_nb][1] = 1
 
         currentElo_home, currentElo_away = one_match_update(Matchs, currentElo_home, currentElo_away, match_nb, K)
