@@ -9,12 +9,12 @@ path_out_prob = "data\probs.csv"
 
 realistic = True
 
-match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
-path_import_W1="data/W1_test3.dat", path_import_W2="data/W2_test3.dat")
+# match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
+# path_import_W1="data/W1_test3.dat", path_import_W2="data/W2_test3.dat")
 # maxCap = 0
 # while(maxCap < 1000 or realistic == False) :
-# match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
-# path_save_W1="data/W1_test4.dat", path_save_W2="data/W2_test4.dat")
+match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
+path_save_W1="data/W1_allbets1.dat", path_save_W2="data/W2_allbets1.dat")
 
 nb_of_matchs = len(match_prediction)
 
@@ -91,51 +91,33 @@ df.to_csv(path_out_prob, index=False, header = False)
 
 
 
-def bestBet(esp1, esp2, esp3, k1, k2, k3) :
-    if (max(esp1, esp2, esp3) < 1) or (max(esp1, esp2, esp3) > 1.5) :
-        return -1
-    if max(k1, k2, k3) >= 6 : 
-        return -1
-    if ( esp1 > 1.4 and esp2 > 1.4 ) or (esp1 > 1.4 and esp3 > 1.4 ) or ( esp2 > 1.4 and esp3 > 1.4 ) :
-        return -1
-    return max(esp1, esp2, esp3)
-
-#Meilleur des 3 paris
-best_G_array = np.array([bestBet(G_array_W[k],G_array_D[k], G_array_L[k], 
-K_array_W[k], K_array_D[k], K_array_L[k]) 
-for k in range(nb_match)])
-
-
-#Paris choisis [[G,K,p]]
-bets_taken = np.array([[best_G_array[k], 0, 0, 0 ] for k in range(nb_match)])
+allbets = np.array([[0, 0, 0, 0, 0]])
+minEsp = 1.3
+maxEsp = 1.4
 for k in range(nb_match) :
-    if (bets_taken[k][0] == G_array_W[k]) :
-        bets_taken[k][1] = K_array_W[k]
-        bets_taken[k][2] = p_array_W[k]
-        bets_taken[k][3] = 1
+    if minEsp < G_array_W[k] < maxEsp :
+        # print([ G_array_W[k], K_array_W[k], p_array_W[k], 1 ])
+        allbets = np.append(allbets, [[ G_array_W[k], K_array_W[k], p_array_W[k], 1, k]], axis=0 )
+        # print(allbets)
+    if minEsp < G_array_D[k] < maxEsp :
+        allbets = np.append(allbets, [[G_array_D[k], K_array_D[k], p_array_D[k], 2, k]], axis=0 )
+    if minEsp < G_array_L[k] < maxEsp :
+        allbets = np.append(allbets, [[G_array_L[k], K_array_L[k], p_array_L[k], 3, k]], axis=0 )
 
-    if (bets_taken[k][0] == G_array_D[k]) :
-        bets_taken[k][1] = K_array_D[k]
-        bets_taken[k][2] = p_array_D[k]
-        bets_taken[k][3] = 2
 
-    if (bets_taken[k][0] == G_array_L[k]) :
-        bets_taken[k][1] = K_array_L[k]
-        bets_taken[k][2] = p_array_L[k]
-        bets_taken[k][3] = 3
 
-#C = Capital 
-C_array = np.array([100 for k in range(nb_match+1)], dtype=float)
+C_array = np.array([[100]], dtype=float)
 
-for i in range(nb_match) : 
-    # print("C_array[i], bets_taken[i][1], bets_taken[i][2]")
-    # print(C_array[i], bets_taken[i][1], bets_taken[i][2])
-    s = mise(C_array[i], bets_taken[i][1], bets_taken[i][2])
-    if (bets_taken[i][3] == winner_array[i]) :
+for i in range(len(allbets)) : 
+
+    s = mise(C_array[i], allbets[i][1], allbets[i][2])
+
+    if (allbets[i][3] == winner_array[int(allbets[i][4])]) :
         res = 1 
     else :
         res = 0
-    C_array[i+1] = C_array[i] -s + s * (res) * bets_taken[i][1]
+    C_array = np.append(C_array, [C_array[i] -s + s * (res) * allbets[i][1]], axis=0)
+
 
 maxCap = np.amax(C_array)
 finCap = C_array[-1]
