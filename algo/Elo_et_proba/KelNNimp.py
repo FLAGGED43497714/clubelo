@@ -3,14 +3,18 @@ from draw_proba_writer import draw_proba_writer
 from Score_estimation1 import score_estimation2
 import pandas as pd
 
-path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
-path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+# path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
+# path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+path_matchs = "data\saisons\\2020_2021_PL_v1.csv"
+path_start_elo = "data\elo_start\elo_start_PL_2020.csv"
+
+
 path_out_prob = "data\probs.csv"
 
 realistic = True
 
 match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
-path_import_W1="data/W1_test8.dat", path_import_W2="data/W2_test8.dat")
+path_import_W1="data/NN_saved/W1_test8.dat", path_import_W2="data/NN_saved/W2_test8.dat")
 # maxCap = 0
 # while(maxCap < 1000 or realistic == False) :
 # match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
@@ -139,7 +143,7 @@ for i in range(nb_match) :
 
 maxCap = np.amax(C_array)
 finCap = C_array[-1]
-print(str(realistic))
+print("realistic = " +str(realistic))
 if (realistic) :
     print("Benefices finaux : "+str(finCap-100))
     print("Benefices max : "+str(maxCap-100))

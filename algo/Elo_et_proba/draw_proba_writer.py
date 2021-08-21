@@ -11,6 +11,7 @@ with open("config/k_value.txt") as f :
 def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W1="data/W1.dat", path_import_W2="data/W2.dat", 
   saved=False, path_save_W1="data/W1.dat", path_save_W2="data/W2.dat") :
   res = dataSetDraw(path_matchs, path_start_elo)
+  print(res)
 
   ##### Entrainement #####
 
@@ -39,7 +40,7 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
 
 
   if ( imported == False ) :
-    print("NN is not imported")
+    # print("NN is not imported")
     error_moy = 1
     error_quad_moy = 1
     while(abs(error_moy) > 0.245 and error_quad_moy > 0.245) :
@@ -56,10 +57,12 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
       error_moy = s/len(X)
       error_quad_moy = s_quad/len(X)
     if ( saved == True ) :
-      print("NN is saved in : "+path_save_W1+" and "+path_save_W2)
+      # print("NN is saved in : "+path_save_W1+" and "+path_save_W2)
       NN.save(out_W1=path_save_W1, out_W2=path_save_W2)
   else :
-    print("NN is imported from : "+path_import_W1+" and "+path_import_W2)
+    # print("NN is imported from : "+path_import_W1+" and "+path_import_W2 + "\n" 
+    # + "Using maxdelta = "+str(400.90837938) + " and not : " +str(maxdelta))
+    maxdelta = 400.90837938
     NN = Neural_Network()
     NN.set(from_W1=path_import_W1, from_W2=path_import_W2)
 
@@ -105,11 +108,11 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
 
     deltaElo = homeElo - awayElo
     Matchs_predictions[match_nb][2] = deltaElo
+    print("deltaElo = "+str(deltaElo) + " // on obtient : "+str(NN.forward([deltaElo/maxdelta, 1])[0]))
 
     draw_percentage = NN.forward([deltaElo/maxdelta, 1])[0]
     Matchs_predictions[match_nb][4] = draw_percentage
     currentElo_home2, currentElo_away2 = one_match_update(Matchs, currentElo_home2, currentElo_away2, match_nb, K)
-
   return Matchs_predictions
 
   # prob_dens = [0 for k in range(60)]
