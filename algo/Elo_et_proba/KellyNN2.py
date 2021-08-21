@@ -2,6 +2,7 @@ import numpy as np
 from draw_proba_writer import draw_proba_writer
 from Score_estimation1 import score_estimation2
 import pandas as pd
+import math
 
 path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
 path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
@@ -12,10 +13,17 @@ realistic = True
 # match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
 # path_import_W1="data/W1_test4.dat", path_import_W2="data/W2_test4.dat")
 maxCap = 0
-finCap = -100
-while(finCap < 1000 or realistic == False) :
+avg_cap = math.log(100)
+bestFinCap = -100
+best_avg_cap = - 10000
+iteration = 0
+maxIteration = 10
+while(iteration < maxIteration) :
+    iteration+=1
     match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
     path_save_W1="data/W1_test7.dat", path_save_W2="data/W2_test7.dat")
+    good_sav_W1 = "data/W1_test9.dat"
+    good_sav_W2 = "data/W2_test9.dat"
 
     nb_of_matchs = len(match_prediction)
 
@@ -135,8 +143,19 @@ while(finCap < 1000 or realistic == False) :
         C_array[i+1] = C_array[i] -s + s * (res) * bets_taken[i][1]
 
     maxCap = np.amax(C_array)
+    log_C = np.array([math.log(C_array[k]) for k in range(len(C_array))], dtype=float)
+    avg_cap = np.mean(log_C)
     finCap = C_array[-1]
-    # print(str(realistic))
+    if avg_cap > best_avg_cap and realistic == True :
+        best_avg_cap = avg_cap
+        copy_W1 = np.load("data/W1_test7.dat", allow_pickle=True)
+        copy_W2 = np.load("data/W2_test7.dat", allow_pickle=True)
+        parameters = np.array([copy_W1, copy_W2], dtype=object)
+        parameters[0].dump(good_sav_W1)
+        parameters[1].dump(good_sav_W2)
+
+
+
     # if (realistic) :
         # print("Benefices finaux : "+str(finCap-100))
         # print("Benefices max : "+str(maxCap-100))
