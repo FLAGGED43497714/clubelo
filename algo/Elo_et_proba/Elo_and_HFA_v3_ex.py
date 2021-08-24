@@ -7,8 +7,8 @@ with open("config/k_value.txt") as f :
     K =  int(f.read())
 
 
-path_matchs = "data\saisons\\2018_2019_FR1_sans.csv"
-path_start_elo = "data\elo_start\elo_start_FR1_2018.csv"
+path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
+path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
 path_current_elo_home = "data/elo_start/elo_FRA1_test2_home.csv"
 path_current_elo_away = "data/elo_start/elo_FRA1_test2_away.csv"
 

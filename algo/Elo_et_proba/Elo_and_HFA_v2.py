@@ -30,7 +30,6 @@ def one_match_update(Matchs, currentElo_home, currentElo_away, match_nb, K) :
             homeElo = float(currentElo_home[k][1])
         if currentElo_away[k][0] == awayTeam :
             awayElo = float(currentElo_away[k][1])
-
     new_home_elo, new_away_elo = elo_update_aftermatch(homeElo, awayElo, home_wins, K)
 
     for k in range(len(currentElo_home)) :
