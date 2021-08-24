@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+from tokenize import String
 import numpy as np
 import pandas as pd
 from NN_draw import Neural_Network
@@ -11,8 +13,7 @@ with open("config/k_value.txt") as f :
 def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W1="data/W1.dat", path_import_W2="data/W2.dat", 
   saved=False, path_save_W1="data/W1.dat", path_save_W2="data/W2.dat") :
   res = dataSetDraw(path_matchs, path_start_elo)
-  print(res)
-
+  
   ##### Entrainement #####
 
   x_1 = np.array(res)[0:, 0]
@@ -20,11 +21,14 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
   for k in range(len(x_1)) :
     x_entrer[k][0] = int(x_1[k])
 
-  maxdelta = np.amax(x_entrer, axis=0)[0]
+  x_entrer_abs = [abs(x_entrer[k][0]) for k in range(len(x_entrer))]
+  maxdelta = np.amax(x_entrer_abs)
 
   # Changement de l'échelle de nos valeurs pour être entre 0 et 1
-  x_entrer = x_entrer/np.amax(x_entrer, axis=0) # On divise chaque entré par la valeur max des entrées
+  x_entrer[k] = [x_entrer[k][0]/maxdelta , 1] # On divise chaque entré par la valeur max des entrées
 
+  # print(maxdelta)
+  # print(x_entrer)
   # On récupère ce qu'il nous intéresse
   X = np.split(x_entrer, [-2])[0] # Données sur lesquelles on va s'entrainer, les 8 premières de notre matrice
 
@@ -37,10 +41,33 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
   for k in range(len(y_1)) :
     y[k][0] = y_1[k]
 
+  # X_neg = np.array([])
+  # X_pos = np.array([[None,None]])
+  # y_neg = np.array([[None]])
+  # y_pos = np.array([[None]])
+  # for k in range(len(X)) :
+  #   print("X[k][0]")
+  #   print(X[k][0])
+  #   if X[k][0] < 0 :
+  #     print(np.array([X[k]]))
+      
+  #     np.append(X_neg, np.array([X[k]]), axis=0)
+  #     np.append(y_neg, y[k])
+  #   else :
+  #     np.append(X_pos, [X[k]], axis = 0)
+  #     np.append(y_pos, y[k])
 
+  # print("X_neg")
+  # print(X_neg)
+  # print("X_pos")
+  # print(X_pos)
+  # print("y_neg")
+  # print(y_neg)
+  # print("y_pos")
+  # print(y_pos)
 
   if ( imported == False ) :
-    # print("NN is not imported")
+    # print("NN is created, not imported")
     error_moy = 1
     error_quad_moy = 1
     while(abs(error_moy) > 0.245 and error_quad_moy > 0.245) :
@@ -50,7 +77,8 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
       s = 0
       s_quad = 0
       for k in range(len(X)) :
-        error = (NN.forward(X[k]/maxdelta) - y_1[k])
+        # print(str(X[k]) + " donne "+ str(NN.forward([X[k][0]/maxdelta, 1])))
+        error = (NN.forward(X[k]) - y_1[k])
         error_quad = error**2 
         s+=error
         s_quad += error_quad
@@ -62,7 +90,8 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
   else :
     # print("NN is imported from : "+path_import_W1+" and "+path_import_W2 + "\n" 
     # + "Using maxdelta = "+str(400.90837938) + " and not : " +str(maxdelta))
-    maxdelta = 400.90837938
+    # maxdelta = 400.90837938
+    print("maxdelta is : "+ str(maxdelta))
     NN = Neural_Network()
     NN.set(from_W1=path_import_W1, from_W2=path_import_W2)
 
@@ -85,7 +114,8 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
 
   nb_de_matchs = len(Matchs)
 
-  Matchs_predictions = np.array([[Matchs[k][0], Matchs[k][1], 0, 0.0, 0.0, 0.0] for k in range(nb_de_matchs)])
+  Matchs_predictions_names = np.array([[Matchs[k][0], Matchs[k][1]] for k in range(nb_de_matchs)], dtype=str) 
+  Matchs_predictions_nbrs = np.array([[0, 0, 0, 0] for k in range(nb_de_matchs)], dtype=float)
 
 
   Elo_name = np.genfromtxt(path_start_elo, delimiter=',', dtype=str)[1:, 0]
@@ -106,14 +136,17 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
       if currentElo_away2[k][0] == awayTeam :
           awayElo = float(currentElo_away2[k][1])
 
+    absDeltaElo = abs(homeElo - awayElo)
     deltaElo = homeElo - awayElo
-    Matchs_predictions[match_nb][2] = deltaElo
-    print("deltaElo = "+str(deltaElo) + " // on obtient : "+str(NN.forward([deltaElo/maxdelta, 1])[0]))
+    Matchs_predictions_nbrs[match_nb][0] = deltaElo
 
     draw_percentage = NN.forward([deltaElo/maxdelta, 1])[0]
-    Matchs_predictions[match_nb][4] = draw_percentage
+    Matchs_predictions_nbrs[match_nb][2] = draw_percentage
     currentElo_home2, currentElo_away2 = one_match_update(Matchs, currentElo_home2, currentElo_away2, match_nb, K)
-  return Matchs_predictions
+
+  # df_elo_away = pd.DataFrame(Matchs_predictions)
+  # df_elo_away.to_csv("test101", index=False, header = False)
+  return Matchs_predictions_names, Matchs_predictions_nbrs
 
   # prob_dens = [0 for k in range(60)]
   # for k in range(60) :

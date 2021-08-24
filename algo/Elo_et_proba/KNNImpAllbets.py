@@ -2,10 +2,14 @@ import numpy as np
 from draw_proba_writer import draw_proba_writer
 from Score_estimation1 import score_estimation2
 import pandas as pd
+import math
 
 path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
 path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
 path_out_prob = "data\probs.csv"
+# path_matchs = "data\saisons\\2020_2021_avec_PL_v1.csv"
+# path_start_elo = "data\elo_start\elo_start_PL_2020.csv"
+
 
 realistic = True
 
@@ -13,14 +17,14 @@ realistic = True
 # path_import_W1="data/W1_test3.dat", path_import_W2="data/W2_test3.dat")
 # maxCap = 0
 # while(maxCap < 1000 or realistic == False) :
-match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
-path_save_W1="data/W1_allbets1.dat", path_save_W2="data/W2_allbets1.dat")
+match_prediction_names, match_prediction_nbrs  = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
+path_import_W1="data/NN_saved/W1_BR100n1", path_import_W2="data/NN_saved/W2_BR100n1")
 
-nb_of_matchs = len(match_prediction)
+nb_of_matchs = len(match_prediction_names)
 
 for match_nb in range(nb_of_matchs) :
-    delta_elo = float(match_prediction[match_nb][2])
-    perct_restant = 1 - float(match_prediction[match_nb][4])
+    delta_elo = float(match_prediction_nbrs[match_nb][0])
+    perct_restant = 1 - float(match_prediction_nbrs[match_nb][2])
     # print(match_prediction)
     # print("perct_restant")
     # print(perct_restant)
@@ -28,8 +32,8 @@ for match_nb in range(nb_of_matchs) :
 
     home_percent = float(( 1 - Eh ) * perct_restant)
     away_percent = float(Eh * perct_restant)
-    match_prediction[match_nb][3] = float(home_percent)
-    match_prediction[match_nb][5] = float(away_percent)
+    match_prediction_nbrs[match_nb][1] = float(home_percent)
+    match_prediction_nbrs[match_nb][3] = float(away_percent)
 
 # df = pd.DataFrame(match_prediction)
 
@@ -61,9 +65,9 @@ p_array_W = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
 p_array_D = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
 p_array_L = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
 for match_nb in range(nb_of_matchs) :
-    p_array_W[match_nb] = match_prediction[match_nb][3]
-    p_array_D[match_nb] = match_prediction[match_nb][4]
-    p_array_L[match_nb] = match_prediction[match_nb][5]
+    p_array_W[match_nb] = match_prediction_nbrs[match_nb][1]
+    p_array_D[match_nb] = match_prediction_nbrs[match_nb][2]
+    p_array_L[match_nb] = match_prediction_nbrs[match_nb][3]
 
 if np.amax(p_array_W) > 1 :
     realistic = False
@@ -92,17 +96,19 @@ df.to_csv(path_out_prob, index=False, header = False)
 
 
 allbets = np.array([[0, 0, 0, 0, 0]])
-minEsp = 1.3
-maxEsp = 1.4
+minEsp = 1
+maxEsp = 1.5
+threeBetMax = 1.5
 for k in range(nb_match) :
-    if minEsp < G_array_W[k] < maxEsp :
-        # print([ G_array_W[k], K_array_W[k], p_array_W[k], 1 ])
-        allbets = np.append(allbets, [[ G_array_W[k], K_array_W[k], p_array_W[k], 1, k]], axis=0 )
-        # print(allbets)
-    if minEsp < G_array_D[k] < maxEsp :
-        allbets = np.append(allbets, [[G_array_D[k], K_array_D[k], p_array_D[k], 2, k]], axis=0 )
-    if minEsp < G_array_L[k] < maxEsp :
-        allbets = np.append(allbets, [[G_array_L[k], K_array_L[k], p_array_L[k], 3, k]], axis=0 )
+    if (max(G_array_W[k], G_array_D[k], G_array_L[k]) < threeBetMax) :
+        if (minEsp < G_array_W[k] < maxEsp )  :
+            # print([ G_array_W[k], K_array_W[k], p_array_W[k], 1 ])
+            allbets = np.append(allbets, [[ G_array_W[k], K_array_W[k], p_array_W[k], 1, k]], axis=0 )
+            # print(allbets)
+        if minEsp < G_array_D[k] < maxEsp :
+            allbets = np.append(allbets, [[G_array_D[k], K_array_D[k], p_array_D[k], 2, k]], axis=0 )
+        if minEsp < G_array_L[k] < maxEsp :
+            allbets = np.append(allbets, [[G_array_L[k], K_array_L[k], p_array_L[k], 3, k]], axis=0 )
 
 
 
@@ -121,10 +127,16 @@ for i in range(len(allbets)) :
 
 maxCap = np.amax(C_array)
 finCap = C_array[-1]
-print(str(realistic))
+log_C = np.array([math.log(C_array[k]) for k in range(len(C_array))])
+avg_log = np.mean(log_C)
+if np.amin(C_array < 0) :
+    avg_log = -10000    
+
+print("realistic = " +str(realistic))
 if (realistic) :
     print("Benefices finaux : "+str(finCap-100))
     print("Benefices max : "+str(maxCap-100))
+    print("avg_log mean = " + str(avg_log))
 
 df = pd.DataFrame(C_array)
 df.to_csv(path_out, index=False, header = False)

@@ -29,12 +29,12 @@ for k in range(len(y_1)) :
 
 
 NN = Neural_Network()
+NN.set(from_W1="data/W1_test11.dat", from_W2="data/W2_test11.dat")
 
-
-prob_dens = [0 for k in range(60)]
-for k in range(60) :
-    prob_dens[k] = NN.forward([5*k / maxdelta, 1])
-x_axis = [5*k for k in range(60)]
+prob_dens = [0 for k in range(120)]
+for k in range(120) :
+    prob_dens[k] = NN.forward([(-300 + 5*k )/ maxdelta, 1])
+x_axis = [(-300 + 5*k) for k in range(120)]
 
 
 s = 0

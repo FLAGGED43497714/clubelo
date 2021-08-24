@@ -3,12 +3,18 @@ from draw_proba_writer import draw_proba_writer
 from Score_estimation1 import score_estimation2
 import pandas as pd
 
-path_matchs = "data\saisons\saison_2021_sans_cotes.csv"
-path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+# path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
+# path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+
+path_matchs = "data\saisons\\saison_2019_2020_sans_cotes.csv"
+path_start_elo = "data\elo_start\elo_start_2019_v2.csv"
+
+
 path_out = "fullversion1.csv"
 
-match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo, imported=True)
-# match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo, saved=True)
+# match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo, imported=True)
+match_prediction_draw = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
+path_import_W1="data/NN_saved/W1_BR100n1", path_import_W2="data/NN_saved/W2_BR100n1")
 
 nb_of_matchs = len(match_prediction_draw)
 

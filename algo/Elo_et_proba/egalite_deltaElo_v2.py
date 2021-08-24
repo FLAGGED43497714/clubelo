@@ -40,7 +40,7 @@ def dataSetDraw(path_matchs, path_start_elo) :
             if currentElo_away[k][0] == awayTeam :
                 awayElo = float(currentElo_away[k][1])
 
-        deltaElo = abs(homeElo - awayElo)
+        deltaElo = homeElo - awayElo
 
         res[match_nb][0] = deltaElo
 

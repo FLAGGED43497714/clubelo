@@ -1,30 +1,33 @@
+from urllib.request import CacheFTPHandler
 import numpy as np
 from draw_proba_writer import draw_proba_writer
 from Score_estimation1 import score_estimation2
 import pandas as pd
+import math
 
-# path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
-# path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
-path_matchs = "data\saisons\\2020_2021_PL_v1.csv"
-path_start_elo = "data\elo_start\elo_start_PL_2020.csv"
+path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
+path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+# path_matchs = "data\saisons\\2020_2021_avec_PL_v1.csv"
+# path_start_elo = "data\elo_start\elo_start_PL_2020.csv"
 
 
 path_out_prob = "data\probs.csv"
 
 realistic = True
 
-match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
-path_import_W1="data/NN_saved/W1_test8.dat", path_import_W2="data/NN_saved/W2_test8.dat")
+
+match_prediction_names, match_prediction_nbrs = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
+path_import_W1="data/NN_saved/W1_BR100n1", path_import_W2="data/NN_saved/W2_BR100n1")
 # maxCap = 0
 # while(maxCap < 1000 or realistic == False) :
 # match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
 # path_save_W1="data/W1_test4.dat", path_save_W2="data/W2_test4.dat")
 
-nb_of_matchs = len(match_prediction)
+nb_of_matchs = len(match_prediction_names)
 
 for match_nb in range(nb_of_matchs) :
-    delta_elo = float(match_prediction[match_nb][2])
-    perct_restant = 1 - float(match_prediction[match_nb][4])
+    delta_elo = float(match_prediction_nbrs[match_nb][0])
+    perct_restant = 1 - float(match_prediction_nbrs[match_nb][2])
     # print(match_prediction)
     # print("perct_restant")
     # print(perct_restant)
@@ -32,8 +35,8 @@ for match_nb in range(nb_of_matchs) :
 
     home_percent = float(( 1 - Eh ) * perct_restant)
     away_percent = float(Eh * perct_restant)
-    match_prediction[match_nb][3] = float(home_percent)
-    match_prediction[match_nb][5] = float(away_percent)
+    match_prediction_nbrs[match_nb][1] = float(home_percent)
+    match_prediction_nbrs[match_nb][3] = float(away_percent)
 
 # df = pd.DataFrame(match_prediction)
 
@@ -45,7 +48,7 @@ def mise(C, K, p) :
     if K*p < 1 :
         return 0
     f = p - (1 - p) / ( K - 1 )
-    return C * f 
+    return C*f
 
 
 
@@ -65,9 +68,9 @@ p_array_W = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
 p_array_D = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
 p_array_L = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
 for match_nb in range(nb_of_matchs) :
-    p_array_W[match_nb] = match_prediction[match_nb][3]
-    p_array_D[match_nb] = match_prediction[match_nb][4]
-    p_array_L[match_nb] = match_prediction[match_nb][5]
+    p_array_W[match_nb] = match_prediction_nbrs[match_nb][1]
+    p_array_D[match_nb] = match_prediction_nbrs[match_nb][2]
+    p_array_L[match_nb] = match_prediction_nbrs[match_nb][3]
 
 if np.amax(p_array_W) > 1 :
     realistic = False
@@ -96,7 +99,7 @@ df.to_csv(path_out_prob, index=False, header = False)
 
 
 def bestBet(esp1, esp2, esp3, k1, k2, k3) :
-    if (max(esp1, esp2, esp3) < 1) or (max(esp1, esp2, esp3) > 1.5) :
+    if (max(esp1, esp2, esp3) < 1 or (max(esp1, esp2, esp3) > 1.5)) :
         return -1
     if max(k1, k2, k3) >= 6 : 
         return -1
@@ -143,10 +146,16 @@ for i in range(nb_match) :
 
 maxCap = np.amax(C_array)
 finCap = C_array[-1]
+
+log_C = np.array([math.log(C_array[k]) for k in range(len(C_array))])
+avg_log = np.mean(log_C)
+if np.amin(C_array < 0) :
+    avg_log = -10000    
+
 print("realistic = " +str(realistic))
 if (realistic) :
     print("Benefices finaux : "+str(finCap-100))
     print("Benefices max : "+str(maxCap-100))
-
+    print("avg_log mean = " + str(avg_log))
 df = pd.DataFrame(C_array)
 df.to_csv(path_out, index=False, header = False)

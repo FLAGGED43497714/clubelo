@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-path_matchs = "data\saisons\saison_2021_sans_cotes.csv"
+path_matchs = "data\saisons\\saison_2019_2020_sans_cotes.csv"
 path_out = "testfile69.csv"
 
 

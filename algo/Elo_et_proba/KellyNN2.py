@@ -4,39 +4,45 @@ from Score_estimation1 import score_estimation2
 import pandas as pd
 import math
 
-path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
-path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
+path_matchs = "data\saisons\\2020_2021_avec_PL_v1.csv"
+# path_matchs = "data\saisons\\savga_PL_20_21.csv"
+path_start_elo = "data\elo_start\elo_start_PL_2020.csv"
+
+# path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
+# path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
 path_out_prob = "data\probs.csv"
 
-realistic = True
 
 # match_prediction = draw_proba_writer(path_matchs, path_start_elo, imported=True, 
 # path_import_W1="data/W1_test4.dat", path_import_W2="data/W2_test4.dat")
 maxCap = 0
-avg_cap = math.log(100)
+# avg_cap = math.log(100)
 bestFinCap = -100
 best_avg_cap = - 10000
 iteration = 0
-maxIteration = 10
+maxIteration = 100
 while(iteration < maxIteration) :
+    realistic = True
     iteration+=1
-    match_prediction = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
+    
+    print(iteration)
+    match_prediction_names, match_prediction_nbrs = draw_proba_writer(path_matchs, path_start_elo, saved=True, 
     path_save_W1="data/W1_test7.dat", path_save_W2="data/W2_test7.dat")
-    good_sav_W1 = "data/W1_test9.dat"
-    good_sav_W2 = "data/W2_test9.dat"
+    good_sav_W1 = "data/W1_test11.dat"
+    good_sav_W2 = "data/W2_test11.dat"
 
-    nb_of_matchs = len(match_prediction)
+    nb_of_matchs = len(match_prediction_names)
 
     for match_nb in range(nb_of_matchs) :
-        delta_elo = float(match_prediction[match_nb][2])
-        perct_restant = 1 - float(match_prediction[match_nb][4])
+        delta_elo = float(match_prediction_nbrs[match_nb][0])
+        perct_restant = 1 - float(match_prediction_nbrs[match_nb][2])
 
         Eh = score_estimation2(delta_elo)
 
         home_percent = float(( 1 - Eh ) * perct_restant)
         away_percent = float(Eh * perct_restant)
-        match_prediction[match_nb][3] = float(home_percent)
-        match_prediction[match_nb][5] = float(away_percent)
+        match_prediction_nbrs[match_nb][1] = float(home_percent)
+        match_prediction_nbrs[match_nb][3] = float(away_percent)
 
 
 
@@ -61,16 +67,14 @@ while(iteration < maxIteration) :
     K_array_L = np.genfromtxt(path_matchs, delimiter=",")[:, 9]
     winner_array = np.genfromtxt(path_matchs, delimiter=",")[:, 10]
 
-
     # Ce qui dépend du NN
     p_array_W = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
     p_array_D = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
     p_array_L = np.array([0 for match_nb in range(nb_of_matchs)], dtype=float)
     for match_nb in range(nb_of_matchs) :
-        p_array_W[match_nb] = match_prediction[match_nb][3]
-        p_array_D[match_nb] = match_prediction[match_nb][4]
-        p_array_L[match_nb] = match_prediction[match_nb][5]
-
+        p_array_W[match_nb] = match_prediction_nbrs[match_nb][1]
+        p_array_D[match_nb] = match_prediction_nbrs[match_nb][2]
+        p_array_L[match_nb] = match_prediction_nbrs[match_nb][3]
     if np.amax(p_array_W) > 1 :
         realistic = False
 
@@ -143,10 +147,21 @@ while(iteration < maxIteration) :
         C_array[i+1] = C_array[i] -s + s * (res) * bets_taken[i][1]
 
     maxCap = np.amax(C_array)
-    log_C = np.array([math.log(C_array[k]) for k in range(len(C_array))], dtype=float)
-    avg_cap = np.mean(log_C)
+    minCap = np.amin(C_array)
+    if minCap <= 0 :
+        avg_cap = -1000000000
+    else :
+        log_C = np.array([math.log(C_array[k]) for k in range(len(C_array))], dtype=float)
+        avg_cap = np.mean(log_C)
+    # print("avg_cap")
+    # print(avg_cap)
+    # print("best_avg_cap")
+    # print(best_avg_cap)
+    # print(realistic)
     finCap = C_array[-1]
     if avg_cap > best_avg_cap and realistic == True :
+        # print("inIF")
+        print(avg_cap)
         best_avg_cap = avg_cap
         copy_W1 = np.load("data/W1_test7.dat", allow_pickle=True)
         copy_W2 = np.load("data/W2_test7.dat", allow_pickle=True)
@@ -160,5 +175,5 @@ while(iteration < maxIteration) :
         # print("Benefices finaux : "+str(finCap-100))
         # print("Benefices max : "+str(maxCap-100))
 
-    df = pd.DataFrame(C_array)
-    df.to_csv(path_out, index=False, header = False)
+    # df = pd.DataFrame(C_array)
+    # df.to_csv(path_out, index=False, header = False)
