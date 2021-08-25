@@ -90,7 +90,7 @@ def draw_proba_writer(path_matchs, path_start_elo, imported=False, path_import_W
   else :
     # print("NN is imported from : "+path_import_W1+" and "+path_import_W2 + "\n" 
     # + "Using maxdelta = "+str(400.90837938) + " and not : " +str(maxdelta))
-    # maxdelta = 400.90837938
+    maxdelta = 400.90837938
     print("maxdelta is : "+ str(maxdelta))
     NN = Neural_Network()
     NN.set(from_W1=path_import_W1, from_W2=path_import_W2)
