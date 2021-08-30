@@ -5,11 +5,14 @@ from Score_estimation1 import score_estimation2
 import pandas as pd
 import math
 
+path_matchs = "data\saisons\SP1_2021_2022.csv"
+path_start_elo = "data\elo_start\elo_start_SP1_2021_2022.csv"
+
 # path_matchs = "data\saisons\SP1_2020_2021_clean.csv"
 # path_start_elo = "data\elo_start\elo_start_SP1_2020_2021.csv"
 
-path_matchs = "data\saisons\\2021_2022_FR1_current.csv"
-path_start_elo = "data\elo_start\elo_start_2021.csv"
+# path_matchs = "data\saisons\\2021_2022_FR1_current.csv"
+# path_start_elo = "data\elo_start\elo_start_2021.csv"
 
 # path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
 # path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
@@ -35,9 +38,7 @@ for match_nb in range(nb_of_matchs) :
     delta_elo = float(match_prediction_nbrs[match_nb][0])
     delta_elo_array[match_nb] = delta_elo
     perct_restant = 1 - float(match_prediction_nbrs[match_nb][2])
-    # print(match_prediction)
-    # print("perct_restant")
-    # print(perct_restant)
+
     Eh = score_estimation2(delta_elo)
 
     home_percent = float(( 1 - Eh ) * perct_restant)
@@ -106,7 +107,8 @@ df.to_csv(path_out_prob, index=False, header = False)
 
 
 def bestBet(esp1, esp2, esp3, delta_elo) :
-    if 1.5 > esp2 > 1 and delta_elo < 0 and max(esp1, esp3) < 1.5 :
+    if max(esp1, esp3) < 1.5 :
+        if 1.5 > esp2 > 1 and delta_elo < 0 :
             return esp2
 
 
@@ -152,5 +154,6 @@ if (realistic) :
     print("Benefices finaux : "+str(finCap-100))
     print("Benefices max : "+str(maxCap-100))
     print("avg_log mean = " + str(avg_log))
+    print("avg_log_mean donne : " + str(math.exp(avg_log)))
 df = pd.DataFrame(C_array)
 df.to_csv(path_out, index=False, header = False)
