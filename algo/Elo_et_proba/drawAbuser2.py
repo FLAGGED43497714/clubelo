@@ -1,4 +1,3 @@
-from urllib.request import CacheFTPHandler
 import numpy as np
 from draw_proba_writer import draw_proba_writer
 from Score_estimation1 import score_estimation2
@@ -18,8 +17,11 @@ from matplotlib import pyplot as plt
 # path_matchs = "data\saisons\\2016_2017_FR2.csv"
 # path_start_elo = "data\elo_start\elo_start_FR2_2016_2017.csv"
 
-path_matchs = "data\saisons\\2017_2018_FR1.csv"
-path_start_elo = "data\elo_start\elo_start_FR1_2017_2018_v2.csv"
+# path_matchs = "data\saisons\\2017_2018_FR1.csv"
+# path_start_elo = "data\elo_start\elo_start_FR1_2017_2018_v2.csv"
+
+# path_matchs = "data\saisons\\2018_2019_FR1.csv"
+# path_start_elo = "data\elo_start\elo_start_FR1_2018_2019.csv"
 
 # path_matchs = "data\saisons\\2019_2020_FR1.csv"
 # path_start_elo = "data\elo_start\elo_start_2019_v2.csv"
@@ -30,14 +32,17 @@ path_start_elo = "data\elo_start\elo_start_FR1_2017_2018_v2.csv"
 # path_matchs = "data\saisons\SP1_2020_2021_clean.csv"
 # path_start_elo = "data\elo_start\elo_start_SP1_2020_2021.csv"
 
-# path_matchs = "data\saisons\\2021_2022_FR1_forbacktest.csv"
-# path_start_elo = "data\elo_start\elo_start_2021.csv"
+path_matchs = "data\saisons\\2021_2022_FR1_forbacktest.csv"
+path_start_elo = "data\elo_start\elo_start_2021.csv"
 
 # path_matchs = "data\saisons\\2020_2021_avec_v4.csv"
 # path_start_elo = "data\elo_start\elo_start_2020_v3.csv"
 
 # path_matchs = "data\saisons\\2020_2021_avec_PL_v1.csv"
 # path_start_elo = "data\elo_start\elo_start_PL_2020.csv"
+
+# path_matchs = "data\saisons\\2021_2022_PL.csv"
+# path_start_elo = "data\elo_start\elo_start_PL_2021.csv"
 
 
 path_out_prob = "data\probs.csv"
