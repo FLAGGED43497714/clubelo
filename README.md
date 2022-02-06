@@ -2,4 +2,4 @@
 
 A betting bot.
 
-The best betting algorithm is Algo/Elo_et_probas/Draw_abuser2.py
+The best betting algorithm is algo/Elo_et_proba/drawAbuser2.py 
